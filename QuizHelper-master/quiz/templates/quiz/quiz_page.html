@@ -1,0 +1,15 @@
+{% extends "quiz/index.html" %}
+{% block comment_block %}
+    <ul id='comments'>
+        {% for c in comment_tree %}
+            <li id = '{{ c.id }}' class="comment" style="margin-left:{{ c.depth|add:c.depth}}em;">
+                <p> {{ c.creator }} - {{ c.date }}</p>
+                <p> {{ c.comment_body }}</p>
+                <p><a href="" class="reply btn-primary btn"> reply </a></p>
+            </li>
+        {% empty %}
+            <li> No comments</li>
+        {% endfor %}
+    </ul>
+
+{% endblock %}

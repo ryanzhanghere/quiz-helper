@@ -1,0 +1,71 @@
+
+
+{% extends "userprofile/base.html" %}
+{% block username %}
+    <a class="navbar-brand" href="#">{{ username }}</a>
+{% endblock %}
+
+{% block welcome %}
+    <h1>Welcome, {{ username }}</h1>
+{% endblock %}
+
+{% block quiz %}
+    {% for q in quizzes %}
+        <div class="col-md-4">
+            <h2>{{ q.title }}</h2>
+
+            <p>{{ q.description }} </p>
+
+            <p><a class="btn btn-default" href="/quiz/?quiz_id={{ q.id }}" role="button">View details &raquo;</a></p>
+        </div>
+    {% endfor %}
+{% endblock %}
+
+{% block file_upload %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <form action="/quiz/upload" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <span class="btn btn-default btn-file">
+                            Browse files<input type="file" name="quiz-file">
+                        </span>
+                    </div>
+                    <button type="submit" class="btn btn-success" disabled>Upload and create</button>
+                </form>
+            </div>
+            <div class="col-md-8">
+                <h2>Sample</h2>
+                <pre>&lt;quiz&gt;
+	&lt;title&gt;cs test&lt;/title&gt;
+	&lt;description&gt;a cs final&lt;/description&gt;
+	&lt;essay-questions&gt;
+		&lt;essay-question&gt;
+			&lt;question&gt;Q1&lt;/question&gt;
+			&lt;answer&gt;ans1&lt;/answer&gt;
+		&lt;/essay-question&gt;
+		&lt;essay-question&gt;
+			&lt;question&gt;Q2&lt;/question&gt;
+			&lt;answer&gt;ans2&lt;/answer&gt;
+		&lt;/essay-question&gt;
+	&lt;/essay-questions&gt;
+	&lt;multiple-choice-questions&gt;
+		&lt;multiple-choice-question&gt;
+			&lt;question correct-answer='a6'&gt;Q3&lt;/question&gt;
+			&lt;choices &gt;
+				&lt;choice&gt;a3&lt;/choice&gt;
+				&lt;choice&gt;a4&lt;/choice&gt;
+				&lt;choice&gt;a5&lt;/choice&gt;
+				&lt;choice&gt;a6&lt;/choice&gt;
+			&lt;/choices&gt;
+		&lt;/multiple-choice-question&gt;
+	&lt;/multiple-choice-questions&gt;
+&lt;/quiz&gt;
+
+                </pre>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

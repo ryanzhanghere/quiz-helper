@@ -1,0 +1,228 @@
+{% load staticfiles %}
+{% load quiz_extras %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ quiz.title }}</title>
+
+    <link rel="stylesheet" href="{% static 'quiz/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'quiz/css/quiz.css' %}">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+    <link rel="icon" type="image/ico" href="{% static 'quiz/img/favicon.ico' %}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="{% static 'quiz/js/bootstrap.min.js' %}"></script>
+
+</head>
+<body class="gradient">
+<nav id="top" class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand website-name" href="#">QuizHelper</a>
+
+        </div>
+        <ul class="nav navbar-nav navbar-right">
+            <li><a href="#comments">Comments</a></li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                   aria-expanded="false">Custom <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li><a href="#essay-question-form">+ Essay</a></li>
+                    <li><a href="#multiple-choice-form">+ Multiple-Choice</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li class="dropdown-header">modes</li>
+                    <li><a href="#" id="toggle-show-answer">Hide all answers</a></li>
+                    <li><a href="#" id="toggle-exam-mode">Exam mode</a></li>
+                    <li><a href="#" id="toggle-flash-card-mode">Flash card mode</a></li>
+                </ul>
+            </li>
+
+            <li class="active"><a class="btn btn-primary" href="/accounts/profile">Back</a></li>
+            <li>
+                <form class="navbar-form navbar-right">
+                    <a class="btn btn-primary" href="{% url 'quiz_user.views.logout' %}">Log Out</a>
+                </form>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+{% for essay_q in essay_questions %}
+    <div class="container essay-question flash-card-panel" style="display: none;">
+        <ul class="list-group">
+            <span class="input-group-addon" id="basic-addon1">Question</span>
+            <li class="list-group-item">{{ essay_q.question_body }}</li>
+        </ul>
+    </div>
+    <div class="container essay-question">
+        <ul class="list-group">
+            <span class="input-group-addon question-header" id="basic-addon1">Question {{ iterator.next }}</span>
+            <li class="list-group-item question-body">{{ essay_q.question_body }}</li>
+        </ul>
+        <ul class="list-group">
+            <span class="input-group-addon answer-header" id="basic-addon1">Answer</span>
+            <li class="list-group-item  quiz-answer">{{ essay_q.answer }}</li>
+        </ul>
+    </div>
+    <br/>
+{% empty %}
+    <div class="container essay-question">
+        <h2>No question</h2>
+    </div>
+{% endfor %}
+<hr>
+<br>
+{% for multi_q in multi_questions %}
+    <div class="container multi-question">
+        <ul class="list-group">
+            <span class="input-group-addon" id="basic-addon1">Question {{ iterator.next }}</span>
+            <li class="list-group-item">{{ multi_q|get:'question' }}</li>
+        </ul>
+        <div class="form-group choice-selection" style="display: none;">
+            <label for="sel1">Choices:</label>
+            <select class="form-control" name="choice">
+                {% for c in multi_q|get:'choices' %}
+                    <option>{{ c }}</option>
+                {% empty %}
+                    <option>No choice</option>
+                {% endfor %}
+            </select>
+        </div>
+        <ul class="list-group choice-panel">
+            <span class="input-group-addon" id="basic-addon1">Choices</span>
+            {% for c in multi_q|get:'choices' %}
+                <li class="list-group-item choice-row">{{ c }}</li>
+            {% empty %}
+                <li class="list-group-item">No choice</li>
+            {% endfor %}
+        </ul>
+        <ul class="list-group answer-panel">
+            <span class="input-group-addon answer-header" id="basic-addon1">Correct answer</span>
+            <li class="list-group-item quiz-answer">{{ multi_q|get:'correct_ans' }}</li>
+        </ul>
+        <ul class="list-group result-panel" style="display: none;">
+            <span class="input-group-addon result-header">Results</span>
+            <li class="list-group-item user-answer"><i class="icon-ok"></i>Nothing here</li>
+            <li class="list-group-item quiz-answer">Correct answer is: {{ multi_q|get:'correct_ans' }}</li>
+        </ul>
+    </div>
+    <br/>
+{% empty %}
+    <div class="container multi-question">
+        <h2>No multiple choice question</h2>
+    </div>
+{% endfor %}
+
+
+<br/><br/>
+{% if can_edit %}
+    <div class="container question-submit" id="essay-question-form">
+        <h2>Add a question</h2>
+
+        <form role="form" method="post" action="/quiz/add_question" id="question-submission">
+            <div class="form-group">
+                <span class="input-group-addon" id="basic-addon1">Question</span>
+                <textarea class="form-control" rows="2" name="question_body"></textarea>
+            </div>
+            <div class="form-group">
+                <span class="input-group-addon" id="basic-addon1">Answer</span>
+                <textarea class="form-control" rows="3" name="answer"></textarea>
+
+                <input type="hidden" name="quiz_id" value="{{ quiz.id }}"/>
+            </div>
+            <button type="submit" class="btn btn-default btn-success">Submit</button>
+        </form>
+    </div>
+
+
+    <hr/>
+    <br/>
+
+    <div class="container question-submit" id="multiple-choice-form">
+        <h2>Add a multiple choice question</h2>
+
+        <form role="form" method="post" action="add_multiple_choice_question" id="question-submission">
+            <div class="form-group">
+                <span class="input-group-addon" id="basic-addon1">Question</span>
+                <textarea class="form-control" rows="2" name="question_body" required></textarea>
+            </div>
+            <div class="form-group">
+                <span class="input-group-addon" id="basic-addon1">Choice 1</span>
+            <textarea class="form-control" rows="1" name="answer1" placeholder="[Undefined]"
+                      required>[Undefined]</textarea>
+            </div>
+            <div class="form-group">
+                <span class="input-group-addon" id="basic-addon1">Choice 2</span>
+                <textarea class="form-control" rows="1" name="answer2" placeholder="[Undefined]">[Undefined]</textarea>
+            </div>
+            <div class="form-group">
+                <span class="input-group-addon" id="basic-addon1">Choice 3</span>
+                <textarea class="form-control" rows="1" name="answer3" placeholder="[Undefined]">[Undefined]</textarea>
+            </div>
+            <div class="form-group">
+                <span class="input-group-addon" id="basic-addon1">Choice 4</span>
+                <textarea class="form-control" rows="1" name="answer4" placeholder="[Undefined]">[Undefined]</textarea>
+            </div>
+
+            <div class="radio">
+                <label>
+                    <input type="radio" name="optionsRadios" id="optionsRadios1" value="1" checked>
+                    Choice 1
+                </label>
+            </div>
+            <div class="radio">
+                <label>
+                    <input type="radio" name="optionsRadios" id="optionsRadios2" value="2">
+                    Choice 2
+                </label>
+            </div>
+            <div class="radio">
+                <label>
+                    <input type="radio" name="optionsRadios" id="optionsRadios3" value="3">
+                    Choice 3
+                </label>
+            </div>
+            <div class="radio">
+                <label>
+                    <input type="radio" name="optionsRadios" id="optionsRadios4" value="4">
+                    Choice 4
+                </label>
+            </div>
+            <input type="hidden" name="quiz_id" value="{{ quiz.id }}"/>
+            <button type="submit" class="btn btn-default btn-success">Submit</button>
+        </form>
+    </div>
+{% endif %}
+
+<hr/>
+<div class="container comments-block">
+    {% block comment_block %}
+    {% endblock %}
+</div>
+
+<hr/>
+{#comment form template cited from http://codepen.io/magnus16/pen/buGiB#}
+<div class="container comment-submit" >
+    <h2> Add comment here</h2>
+    <form class="form-inline" id="comment-form" role="form" action="add_comment" method="post">
+        <div class="form-group">
+            <input class="form-control" type="text" name="content" placeholder="Your comments"/>
+            <input type="hidden" name="quiz_id" value="{{ quiz.id }}"/>
+            <input type="hidden" class='parent' name="parent" value=""/>
+        </div>
+        <div class="form-group">
+            <button class="btn btn-default" type="submit">Add</button>
+        </div>
+    </form>
+</div>
+
+<span id="top-link-block" class="hidden">
+    <a href="#top" class="well well-sm" onclick="$('html,body').animate({scrollTop:0},'slow');return false;">
+        <i class="glyphicon glyphicon-chevron-up"></i> Back to Top
+    </a>
+</span><!-- /top-link-block -->
+<script src="{% static 'quiz/js/main.js' %}"></script>
+<script src="{% static 'quiz/js/rotate3Di/rotate3Di.js' %}"></script>
+<script src="{% static 'quiz/js/rotate3Di/jquery-css-transform/jquery-css-transform.js' %}"></script>
+</body>
+</html>

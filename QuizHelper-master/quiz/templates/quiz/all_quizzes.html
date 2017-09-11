@@ -1,0 +1,64 @@
+{% load staticfiles %}
+{% load quiz_extras %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>All quizzes</title>
+    <link rel="stylesheet" href="{% static 'quiz/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'quiz/css/quiz.css' %}">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+    <link rel="icon" type="image/ico" href="{% static 'quiz/img/favicon.ico' %}">
+
+</head>
+<body>
+<nav id="top" class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand website-name" href="#">QuizHelper</a>
+
+        </div>
+        <ul class="nav navbar-nav navbar-right">
+            <li class="active"><a class="btn btn-primary" href="/accounts/profile">Back</a></li>
+            <li>
+                <form class="navbar-form navbar-right">
+                    <a class="btn btn-primary" href="{% url 'quiz_user.views.logout' %}">Log Out</a>
+                </form>
+            </li>
+        </ul>
+    </div>
+</nav>
+<div class="container">
+    <h2>All quizzes</h2>
+
+    <p>Check what others have!</p>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Creator</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for q in quizzes %}
+        <tr>
+            <td><a href="/quiz/?quiz_id={{ q.id }}" class="btn btn-info">{{ q.title }}</a></td>
+            <td>{{ q.description }}</td>
+            <td>{{ q.creator }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td>No quizzes</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+</table>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="{% static 'quiz/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'quiz/js/main.js' %}"></script>
+</body>
+</html>

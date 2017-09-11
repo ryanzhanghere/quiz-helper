@@ -1,0 +1,41 @@
+{% load staticfiles %}
+<html>
+<head>
+    <title>User Login</title>
+    <link rel="stylesheet" href="{% static 'quiz/css/bootstrap.min.css' %}">
+</head>
+<body>
+
+<div class="container">
+    {% if form.errors %}
+        <p>Your username and password didn't match. Please try again.</p>
+    {% endif %}
+    <form class="form-signin" method="post" action="/accounts/auth/">
+        <h2 class="form-signin-heading">Please sign in</h2>
+        <label for="username" class="sr-only">User name: </label>
+        <input type="text" name="username" class="form-control" value="" id="username" required autofocus>
+        <label for="password" class="sr-only">Password: </label>
+        <input type="password" name="password" class="form-control" value="" id="password" required>
+
+        <button class="btn btn-lg btn-primary btn-block" type="submit" value="login">Sign in</button>
+    {% csrf_token %}
+    </form>
+    <a class="btn btn-primary" href="/accounts/register">Register</a>
+
+</div>
+
+{##}
+{#<h1>User Login</h1>#}
+{#{% if form.errors %}#}
+{#    <p>Your username and password didn't match. Please try again.</p>#}
+{#{% endif %}#}
+{#<form method="post" action="/accounts/auth/">#}
+{##}
+{##}
+{#    <input type="submit"/>#}
+{#    {% csrf_token %}#}
+{#</form>#}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="{% static 'quiz/js/bootstrap.min.js' %}"></script>
+</body>
+</html>

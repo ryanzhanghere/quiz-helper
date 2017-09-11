@@ -1,0 +1,26 @@
+{% load bootstrap_toolkit %}
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+    <link rel="icon" type="image/ico" href="{% static 'quiz/img/favicon.ico' %}">
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="{% static 'quiz/css/bootstrap.min.css' %}">
+</head>
+<body>
+<h2>Register</h2>
+
+    <form action="/accounts/register/" method="POST">
+
+        {{ form|as_bootstrap }}
+
+        <input type="submit" value="Register"/>
+        <a class="btn-primary btn" href="/accounts/login">Already registered? Login </a>
+        {% csrf_token %}
+    </form>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="{% static 'quiz/js/bootstrap.min.js' %}"></script>
+</body>
+</html>
